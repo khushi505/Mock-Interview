@@ -1,0 +1,42 @@
+:root {
+  background-color: black;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+.navbar {
+  color: white;
+}
+
+.name {
+  font-family: "Dancing Script", cursive;
+  font-weight: 800;
+  font-size: 35px;
+  padding-left: 10px;
+}
+
+.resume-analyzer {
+  display: flex;
+}
+
+.left-section {
+  flex: 1;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 60px;
+}
+
+.right-section img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.upload {
+  position: relative;
+  top: 40px;
+}
