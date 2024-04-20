@@ -8,6 +8,7 @@ function ResumeAnalyzer() {
   const [answers, setAnswers] = useState([]);
   const [score, setScore] = useState(null);
   const [userResponses, setUserResponses] = useState({});
+  const [showSubmit, setShowSubmit] = useState(false);
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
   };
@@ -43,7 +44,7 @@ function ResumeAnalyzer() {
           },
         }
       );
-
+      setShowSubmit(true);
       if (response.status === 200) {
         setQuestions(response.data.questions);
         console.log(response.data);
@@ -114,14 +115,17 @@ function ResumeAnalyzer() {
               <div key={index}>
                 <p>{question}</p>
                 <textarea
-                  rows="5"
+                  rows="4"
                   cols="60"
                   value={answers[index]}
                   onChange={(e) => handleAnswerChange(question, e.target.value)}
                 />
               </div>
             ))}
-          <button onClick={handleScoreCalculation}>Submit Answers</button>
+
+          {showSubmit && (
+            <button onClick={handleScoreCalculation}>Submit Answers</button>
+          )}
         </div>
         {score !== null && (
           <div id="scoreContainer">
