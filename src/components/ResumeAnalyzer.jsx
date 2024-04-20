@@ -7,7 +7,7 @@ function ResumeAnalyzer() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [score, setScore] = useState(null);
-
+  const [userResponses, setUserResponses] = useState({});
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
   };
@@ -15,30 +15,27 @@ function ResumeAnalyzer() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Check if resume file is selected
     if (!resumeFile) {
       console.error("Please select a resume file.");
       return;
     }
 
-    // Call fetchQuestionsFromBackend
     fetchQuestionsFromBackend();
   };
-  // ?data={"techStack": "Node JS MongoDB", "difficultyLevel": 2, "questionCount":5}
-
   const data = {
-    techStack: "Node JS MongoDB",
+    techStack: "from resume",
     difficultyLevel: 2,
     questionCount: 5,
   };
-
   const fetchQuestionsFromBackend = async () => {
     try {
       const formData = new FormData();
       formData.append("file", resumeFile);
 
       const response = await axios.post(
-        `http://192.168.140.1:8000/questions?data=${data}`,
+        `https://candidai-2.onrender.com/questions?data=${JSON.stringify(
+          data
+        )}`,
         formData,
         {
           headers: {
@@ -48,7 +45,8 @@ function ResumeAnalyzer() {
       );
 
       if (response.status === 200) {
-        setQuestions(response.data);
+        setQuestions(response.data.questions);
+        console.log(response.data);
       } else {
         throw new Error("Failed to fetch questions");
       }
@@ -57,19 +55,30 @@ function ResumeAnalyzer() {
     }
   };
 
-  const handleAnswerChange = (index, selectedOption) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = selectedOption;
-    setAnswers(newAnswers);
+  const handleAnswerChange = (question, answer) => {
+    const updatedUserResponses = {
+      ...userResponses,
+      [question]: answer,
+    };
+    setUserResponses(updatedUserResponses);
   };
-
   const handleScoreCalculation = async () => {
+    const userData = JSON.stringify(userResponses);
+    console.log(JSON.stringify(userResponses));
+
     try {
-      const response = await axios.post("http://192.168.140.1:8000/questions", {
-        techStack: "Node JS MongoDB",
-        difficultyLevel: 2,
-        questionCount: 5,
-      });
+      const response = await axios.post(
+        "https://candidai-2.onrender.com/check-answers",
+        userData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      console.log(response.data);
 
       if (response.status === 200) {
         setScore(response.data.score);
@@ -84,6 +93,11 @@ function ResumeAnalyzer() {
   return (
     <div className="resume-analyzer">
       <div className="left-section">
+        <p>
+          1. Upload your resume <br /> 2. Receive personalized questions <br />
+          3. No cheating <br />
+          4. Let's enhance your career journey
+        </p>
         <form onSubmit={handleSubmit}>
           <input
             type="file"
@@ -95,27 +109,18 @@ function ResumeAnalyzer() {
           </button>
         </form>
         <div id="questionsContainer">
-          {questions.map((question, index) => (
-            <div key={index}>
-              <p>{question.question}</p>
-              <ul>
-                {question.options.map((option, optionIndex) => (
-                  <li key={optionIndex}>
-                    <input
-                      type="radio"
-                      id={`option_${index}_${optionIndex}`}
-                      name={`question_${index}`}
-                      value={option}
-                      onChange={() => handleAnswerChange(index, optionIndex)}
-                    />
-                    <label htmlFor={`option_${index}_${optionIndex}`}>
-                      {option}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {questions &&
+            questions.map((question, index) => (
+              <div key={index}>
+                <p>{question}</p>
+                <textarea
+                  rows="5"
+                  cols="60"
+                  value={answers[index]}
+                  onChange={(e) => handleAnswerChange(question, e.target.value)}
+                />
+              </div>
+            ))}
           <button onClick={handleScoreCalculation}>Submit Answers</button>
         </div>
         {score !== null && (

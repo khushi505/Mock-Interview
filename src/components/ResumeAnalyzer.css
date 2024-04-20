@@ -9,10 +9,12 @@
 }
 
 .name {
-  font-family: "Dancing Script", cursive;
-  font-weight: 800;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
   font-size: 35px;
   padding-left: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .resume-analyzer {
@@ -21,6 +23,10 @@
 
 .left-section {
   flex: 1;
+  padding-top: 120px;
+  padding-left: 30px;
+  font-size: 24px;
+  color: rgb(255, 168, 255);
 }
 
 .right-section {
@@ -37,6 +43,15 @@
 }
 
 .upload {
-  position: relative;
-  top: 40px;
+  background-color: rgb(255, 180, 255);
+  height: 35px;
+  border-radius: 10px;
+  border: 0px;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+  font-family: "Poppins", sans-serif;
+}
+
+.upload:hover {
+  background-color: rgb(255, 209, 255);
 }

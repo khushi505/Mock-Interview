@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <NavStyled>
       <div className="navbar">
-        <h1 className="name">Project Name</h1>
+        <h1 className="name">Resume Based Mock Interview</h1>
       </div>
     </NavStyled>
   );
