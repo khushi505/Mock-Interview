@@ -18,10 +18,10 @@ The Resume-Based Personalized Question Generator is a web application designed t
 3. **Prepare for Interviews:** Users can use these questions to practice and prepare for real interviews.
 
 ## Tech Stack 
-1.React
-2.FastAPI
-3.Gemini API
-4.WebGazer.js 
+* React
+* FastAPI
+* Gemini API
+* WebGazer.js 
 
 ![image](https://github.com/khushi505/Mock-Interview/assets/121372231/bd2a1a17-afd8-47f8-b484-eb63800559b8)
 
