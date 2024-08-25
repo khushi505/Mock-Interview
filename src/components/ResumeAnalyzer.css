@@ -1,11 +1,6 @@
 :root {
-  background-color: black;
   color: white;
   font-family: "Poppins", sans-serif;
-}
-
-.navbar {
-  color: white;
 }
 
 .name {
@@ -28,8 +23,9 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-size: 24px;
-  color: rgb(255, 168, 255);
+  font-size: 30px;
+  color: yellow;
+  font-weight: 500;
 }
 
 .right-section {
@@ -43,36 +39,23 @@
 .right-section img {
   max-width: 100%;
   max-height: 100%;
+  margin-right: 30px;
+  margin-top: 10px;
 }
 
 .upload {
-  background-color: rgb(255, 180, 255);
-  height: 35px;
+  background-color: #4caf50;
+  height: 40px;
   border-radius: 10px;
   border: 0px;
   cursor: pointer;
   transition: transform 0.3s, background-color 0.3s;
   font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .upload:hover {
-  background-color: rgb(255, 209, 255);
-}
-button {
-  background-color: #4caf50; /* Green */
-  border: none;
-  color: rgb(15, 15, 15);
-  padding: 4px 32px;
-  text-align: center;
-  text-decoration: none;
-  font-weight: 700;
-  display: inline-block;
-  margin: 4px 2px;
+  background-color: yellow;
   cursor: pointer;
-  border-radius: 8px;
-  line-height: 32px;
-}
-
-button:hover {
-  background-color: #45a049;
 }

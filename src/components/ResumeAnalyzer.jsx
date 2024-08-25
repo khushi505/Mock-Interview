@@ -9,12 +9,15 @@ function ResumeAnalyzer() {
   const [score, setScore] = useState(null);
   const [userResponses, setUserResponses] = useState({});
   const [showSubmit, setShowSubmit] = useState(false);
+
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
+    console.log("File selected:", event.target.files[0]);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log("Form submitted");
 
     if (!resumeFile) {
       console.error("Please select a resume file.");
@@ -23,18 +26,20 @@ function ResumeAnalyzer() {
 
     fetchQuestionsFromBackend();
   };
+
   const data = {
     techStack: "from resume",
     difficultyLevel: 2,
     questionCount: 5,
   };
+
   const fetchQuestionsFromBackend = async () => {
     try {
       const formData = new FormData();
       formData.append("file", resumeFile);
 
       const response = await axios.post(
-        `https://candidai-2.onrender.com/questions?data=${JSON.stringify(
+        `https://apna-kaam-banta-bhaad-mein-jaye-janta.onrender.com/questions?data=${JSON.stringify(
           data
         )}`,
         formData,
@@ -44,10 +49,11 @@ function ResumeAnalyzer() {
           },
         }
       );
-      setShowSubmit(true);
+
       if (response.status === 200) {
         setQuestions(response.data.questions);
-        console.log(response.data);
+        setShowSubmit(true);
+        console.log("Questions fetched:", response.data.questions);
       } else {
         throw new Error("Failed to fetch questions");
       }
@@ -63,13 +69,14 @@ function ResumeAnalyzer() {
     };
     setUserResponses(updatedUserResponses);
   };
+
   const handleScoreCalculation = async () => {
     const userData = JSON.stringify(userResponses);
-    console.log(JSON.stringify(userResponses));
+    console.log("User responses:", userData);
 
     try {
       const response = await axios.post(
-        "https://candidai-2.onrender.com/check-answers",
+        "https://apna-kaam-banta-bhaad-mein-jaye-janta.onrender.com/check-answers",
         userData,
         {
           headers: {
@@ -79,10 +86,9 @@ function ResumeAnalyzer() {
         }
       );
 
-      console.log(response.data);
-
       if (response.status === 200) {
         setScore(response.data.score);
+        console.log("Score received:", response.data.score);
       } else {
         throw new Error("Failed to calculate score");
       }

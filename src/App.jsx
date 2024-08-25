@@ -1,12 +1,14 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ResumeAnalyzer from "./components/ResumeAnalyzer";
+import Landing from "./components/Landing";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-function App() {
+function InterviewPage() {
   const [count, setCount] = useState(0);
-  const [isLooking, setIsLooking] = useState(true); // New state variable
+  const [isLooking, setIsLooking] = useState(true);
 
   useEffect(() => {
     const webgazer = window.webgazer;
@@ -18,16 +20,16 @@ function App() {
     webgazer
       .setGazeListener((data, clock) => {
         if (!data || data.x === null || data.y === null) {
-          setIsLooking(false); // User is not looking at the screen
+          setIsLooking(false);
           if (count >= 3) {
             alert("Test ended, malpractice detected");
           }
         } else {
-          setIsLooking(true); // User is looking at the screen
+          setIsLooking(true);
           const distanceFromCenterX = Math.abs(data.x - centerX);
           const distanceFromCenterY = Math.abs(data.y - centerY);
           if (distanceFromCenterX > centerX || distanceFromCenterY > centerY) {
-            setCount((prevCount) => prevCount + 1); // Use callback for updating count
+            setCount((prevCount) => prevCount + 1);
             if (count >= 3) {
               alert("Test ended, malpractice detected");
             }
@@ -40,12 +42,24 @@ function App() {
       alert("Test is restarting.");
       webgazer.pause();
     };
-  }, []); // Add count to the dependency array
+  }, [count]);
+
   return (
-    <div className="app">
+    <div className="interview-page">
       <Navbar />
       <ResumeAnalyzer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/app" element={<InterviewPage />} />
+      </Routes>
+    </Router>
   );
 }
 
