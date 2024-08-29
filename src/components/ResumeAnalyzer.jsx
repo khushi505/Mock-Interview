@@ -1,18 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ResumeAnalyzer.css";
+import { useNavigate } from "react-router-dom";
 
-function ResumeAnalyzer() {
+function ResumeAnalyzer({ onResumeUpload }) {
   const [resumeFile, setResumeFile] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [score, setScore] = useState(null);
   const [userResponses, setUserResponses] = useState({});
   const [showSubmit, setShowSubmit] = useState(false);
+  const [warningIssued, setWarningIssued] = useState(false); // New state
+  const [isMonitoring, setIsMonitoring] = useState(false); // New state
+  const navigate = useNavigate();
+
+  const initializeWebGazer = () => {
+    const webgazer = window.webgazer;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const centerX = screenWidth / 2;
+    const centerY = screenHeight / 2;
+
+    webgazer
+      .setGazeListener((data) => {
+        if (isMonitoring) {
+          if (!data || data.x === null || data.y === null) {
+            if (warningIssued) {
+              alert("Test ended, malpractice detected");
+              webgazer.pause();
+              navigate("/");
+            } else {
+              alert("Warning: Test is restarting.");
+              setWarningIssued(true);
+            }
+          } else {
+            const distanceFromCenterX = Math.abs(data.x - centerX);
+            const distanceFromCenterY = Math.abs(data.y - centerY);
+            if (
+              distanceFromCenterX > centerX ||
+              distanceFromCenterY > centerY
+            ) {
+              if (warningIssued) {
+                alert("Test ended, malpractice detected");
+                webgazer.pause();
+                navigate("/");
+              } else {
+                alert("Warning: Test is restarting.");
+                setWarningIssued(true);
+              }
+            }
+          }
+        }
+      })
+      .begin();
+  };
+
+  useEffect(() => {
+    initializeWebGazer();
+    return () => {
+      window.webgazer.pause();
+    };
+  }, [warningIssued, navigate, isMonitoring]);
 
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
     console.log("File selected:", event.target.files[0]);
+    if (onResumeUpload) {
+      onResumeUpload();
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -25,12 +80,13 @@ function ResumeAnalyzer() {
     }
 
     fetchQuestionsFromBackend();
+    setIsMonitoring(true); // Start monitoring after resume upload
   };
 
   const data = {
     techStack: "from resume",
     difficultyLevel: 2,
-    questionCount: 5,
+    questionCount: 6,
   };
 
   const fetchQuestionsFromBackend = async () => {
@@ -39,9 +95,7 @@ function ResumeAnalyzer() {
       formData.append("file", resumeFile);
 
       const response = await axios.post(
-        `https://apna-kaam-banta-bhaad-mein-jaye-janta.onrender.com/questions?data=${JSON.stringify(
-          data
-        )}`,
+        `http://206.1.53.31:8000/questions?data=${JSON.stringify(data)}`,
         formData,
         {
           headers: {
@@ -51,7 +105,8 @@ function ResumeAnalyzer() {
       );
 
       if (response.status === 200) {
-        setQuestions(response.data.questions);
+        const fetchedQuestions = response.data.questions.slice(0, 6);
+        setQuestions(fetchedQuestions);
         setShowSubmit(true);
         console.log("Questions fetched:", response.data.questions);
       } else {
@@ -76,7 +131,7 @@ function ResumeAnalyzer() {
 
     try {
       const response = await axios.post(
-        "https://apna-kaam-banta-bhaad-mein-jaye-janta.onrender.com/check-answers",
+        "http://206.1.53.31:8000/check-answers",
         userData,
         {
           headers: {
@@ -117,7 +172,7 @@ function ResumeAnalyzer() {
         </form>
         <div id="questionsContainer">
           {questions &&
-            questions.map((question, index) => (
+            questions.slice(0, 6).map((question, index) => (
               <div key={index}>
                 <p>{question}</p>
                 <textarea

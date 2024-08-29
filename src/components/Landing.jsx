@@ -7,19 +7,6 @@ import mock from "../../public/assets/mock.jpg";
 const Landing = () => {
   return (
     <div className="landing-page">
-      <div className="landing_nav">
-        <div className="logo">
-          <img src={logo} alt="" />
-        </div>
-
-        <h1>Resume Based Mock Interview</h1>
-
-        <div className="right_panel">
-          <div className="profile">Profile</div>
-          <div className="login">Login</div>
-        </div>
-      </div>
-
       <div className="about">
         <div className="about_left">
           Practice Smarter, <br />

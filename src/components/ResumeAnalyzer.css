@@ -1,5 +1,5 @@
 :root {
-  color: white;
+  color: black;
   font-family: "Poppins", sans-serif;
 }
 
@@ -14,6 +14,45 @@
 
 .resume-analyzer {
   display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background-image: url(../../public/assets/interview.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+
+.full-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); /* Black background with some transparency */
+  z-index: 1; /* Ensure it appears above the background image */
+}
+
+#questionsContainer {
+  padding: 20px;
+  border-radius: 8px; /* Optional: to make corners rounded */
+  z-index: 2; /* Ensure it appears above the black overlay */
+  color: white; /* White text for better readability */
+  position: relative;
+}
+
+#questionsContainer p {
+  color: white; /* White text for better readability */
+}
+
+#questionsContainer textarea {
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .left-section {
@@ -26,6 +65,7 @@
   font-size: 30px;
   color: yellow;
   font-weight: 500;
+  z-index: 2; /* Ensure it appears above the black overlay */
 }
 
 .right-section {
@@ -34,6 +74,7 @@
   justify-content: flex-end;
   align-items: center;
   padding-top: 60px;
+  z-index: 2; /* Ensure it appears above the black overlay */
 }
 
 .right-section img {
