@@ -30,3 +30,8 @@ The Resume-Based Personalized Question Generator is a web application designed t
 
 ![image](https://github.com/khushi505/Mock-Interview/assets/121372231/180b45c6-0621-47e0-9926-ef372c74d83d)
 
+
+
+
+https://github.com/user-attachments/assets/b024bb5b-b858-4cb3-9646-d09a12e0bcb4
+
