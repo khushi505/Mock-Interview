@@ -45,6 +45,10 @@
   border-radius: 8px; /* Optional: to make corners rounded */
   z-index: 2; /* Ensure it appears above the black overlay */
   color: white; /* White text for better readability */
+<<<<<<< HEAD
+=======
+  
+>>>>>>> d8e46d0 (ui changes)
 }
 
 #questionsContainer p {
