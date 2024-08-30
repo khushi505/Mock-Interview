@@ -95,7 +95,8 @@ function ResumeAnalyzer({ onResumeUpload }) {
       formData.append("file", resumeFile);
 
       const response = await axios.post(
-        `http://206.1.53.31:8000/questions?data=${JSON.stringify(data)}`,
+        // `http://206.1.53.31:8000/apis/questions?data=${JSON.stringify(data)}`,
+        `https://candidai.onrender.com/questions?data=${JSON.stringify(data)}`,
         formData,
         {
           headers: {
@@ -131,7 +132,8 @@ function ResumeAnalyzer({ onResumeUpload }) {
 
     try {
       const response = await axios.post(
-        "http://206.1.53.31:8000/check-answers",
+        // "http://206.1.53.31:8000/apis/check-answers",
+        "https://candidai.onrender.com/check-answers",
         userData,
         {
           headers: {
