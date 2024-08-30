@@ -20,7 +20,7 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-
+  height: 100%;
   position: relative;
   padding-left: 40vh;
 }
@@ -45,9 +45,6 @@
   border-radius: 8px; /* Optional: to make corners rounded */
   z-index: 2; /* Ensure it appears above the black overlay */
   color: white; /* White text for better readability */
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 
 #questionsContainer p {
