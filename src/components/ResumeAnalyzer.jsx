@@ -10,45 +10,57 @@ function ResumeAnalyzer({ onResumeUpload }) {
   const [score, setScore] = useState(null);
   const [userResponses, setUserResponses] = useState({});
   const [showSubmit, setShowSubmit] = useState(false);
-  const [warningIssued, setWarningIssued] = useState(false); // New state
-  const [isMonitoring, setIsMonitoring] = useState(false); // New state
+  const [warningIssued, setWarningIssued] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [outOfBoundsCount, setOutOfBoundsCount] = useState(0); // New state to track out-of-bounds frames
   const navigate = useNavigate();
 
   const initializeWebGazer = () => {
     const webgazer = window.webgazer;
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    const centerX = screenWidth / 2;
-    const centerY = screenHeight / 2;
+
+    // Adjusted bounding box with added tolerance
+    const greenBox = {
+      minX: 100, // Boundary adjustment
+      maxX: 900, // Boundary adjustment
+      minY: 100, // Boundary adjustment
+      maxY: 900, // Boundary adjustment
+    };
 
     webgazer
       .setGazeListener((data) => {
-        if (isMonitoring) {
-          if (!data || data.x === null || data.y === null) {
+        if (isMonitoring && data) {
+          const { x, y } = data;
+
+          console.log(`Gaze coordinates: X: ${x}, Y: ${y}`);
+          console.log(
+            `Green Box: minX: ${greenBox.minX}, maxX: ${greenBox.maxX}, minY: ${greenBox.minY}, maxY: ${greenBox.maxY}`
+          );
+
+          const isOutsideGreenBox =
+            x < greenBox.minX ||
+            x > greenBox.maxX ||
+            y < greenBox.minY ||
+            y > greenBox.maxY;
+
+          if (isOutsideGreenBox) {
+            setOutOfBoundsCount(outOfBoundsCount + 1);
+          } else {
+            setOutOfBoundsCount(0);
+          }
+
+          // Trigger alert only if out of bounds for more than 5 frames consecutively
+          if (outOfBoundsCount > 5) {
             if (warningIssued) {
               alert("Test ended, malpractice detected");
               webgazer.pause();
               navigate("/");
             } else {
-              alert("Warning: Test is restarting.");
+              alert(
+                "Warning: Please ensure your face stays within the green box."
+              );
               setWarningIssued(true);
             }
-          } else {
-            const distanceFromCenterX = Math.abs(data.x - centerX);
-            const distanceFromCenterY = Math.abs(data.y - centerY);
-            if (
-              distanceFromCenterX > centerX ||
-              distanceFromCenterY > centerY
-            ) {
-              if (warningIssued) {
-                alert("Test ended, malpractice detected");
-                webgazer.pause();
-                navigate("/");
-              } else {
-                alert("Warning: Test is restarting.");
-                setWarningIssued(true);
-              }
-            }
+            setOutOfBoundsCount(0); // Reset the count after triggering the alert
           }
         }
       })
@@ -60,7 +72,7 @@ function ResumeAnalyzer({ onResumeUpload }) {
     return () => {
       window.webgazer.pause();
     };
-  }, [warningIssued, navigate, isMonitoring]);
+  }, [warningIssued, navigate, isMonitoring, outOfBoundsCount]);
 
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
@@ -95,8 +107,7 @@ function ResumeAnalyzer({ onResumeUpload }) {
       formData.append("file", resumeFile);
 
       const response = await axios.post(
-        // `http://206.1.53.31:8000/apis/questions?data=${JSON.stringify(data)}`,
-        `https://candidai.onrender.com/questions?data=${JSON.stringify(data)}`,
+        `http://206.1.53.31:8000/questions?data=${JSON.stringify(data)}`,
         formData,
         {
           headers: {
@@ -132,8 +143,7 @@ function ResumeAnalyzer({ onResumeUpload }) {
 
     try {
       const response = await axios.post(
-        // "http://206.1.53.31:8000/apis/check-answers",
-        "https://candidai.onrender.com/check-answers",
+        "http://206.1.53.31:8000/check-answers",
         userData,
         {
           headers: {
