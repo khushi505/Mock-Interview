@@ -12,7 +12,6 @@ function ResumeAnalyzer({ onResumeUpload }) {
   const [showSubmit, setShowSubmit] = useState(false);
   const [warningIssued, setWarningIssued] = useState(false); // New state
   const [isMonitoring, setIsMonitoring] = useState(false); // New state
-  const [outOfBoundsCount, setOutOfBoundsCount] = useState(0); // New state to track out-of-bounds frames
   const navigate = useNavigate();
 
   const initializeWebGazer = () => {
@@ -21,10 +20,10 @@ function ResumeAnalyzer({ onResumeUpload }) {
     try {
       // Adjusted bounding box with added tolerance
       const greenBox = {
-        minX: 100, // Boundary adjustment
-        maxX: 900, // Boundary adjustment
-        minY: 100, // Boundary adjustment
-        maxY: 900, // Boundary adjustment
+        minX: 10, // Boundary adjustment
+        maxX: 1500, // Boundary adjustment
+        minY: 10, // Boundary adjustment
+        maxY: 1500, // Boundary adjustment
       };
 
       webgazer
@@ -44,13 +43,6 @@ function ResumeAnalyzer({ onResumeUpload }) {
               y > greenBox.maxY;
 
             if (isOutsideGreenBox) {
-              setOutOfBoundsCount(outOfBoundsCount + 1);
-            } else {
-              setOutOfBoundsCount(0);
-            }
-
-            // Trigger alert only if out of bounds for more than 5 frames consecutively
-            if (outOfBoundsCount > 5) {
               if (warningIssued) {
                 alert("Test ended, malpractice detected");
                 webgazer.pause();
@@ -61,7 +53,6 @@ function ResumeAnalyzer({ onResumeUpload }) {
                 );
                 setWarningIssued(true);
               }
-              setOutOfBoundsCount(0); // Reset the count after triggering the alert
             }
           }
         })
@@ -76,7 +67,7 @@ function ResumeAnalyzer({ onResumeUpload }) {
     return () => {
       window.webgazer.pause();
     };
-  }, [warningIssued, navigate, isMonitoring, outOfBoundsCount]);
+  }, [warningIssued, navigate, isMonitoring]);
 
   const handleFileChange = (event) => {
     setResumeFile(event.target.files[0]);
