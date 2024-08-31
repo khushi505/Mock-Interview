@@ -10,61 +10,65 @@ function ResumeAnalyzer({ onResumeUpload }) {
   const [score, setScore] = useState(null);
   const [userResponses, setUserResponses] = useState({});
   const [showSubmit, setShowSubmit] = useState(false);
-  const [warningIssued, setWarningIssued] = useState(false);
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [warningIssued, setWarningIssued] = useState(false); // New state
+  const [isMonitoring, setIsMonitoring] = useState(false); // New state
   const [outOfBoundsCount, setOutOfBoundsCount] = useState(0); // New state to track out-of-bounds frames
   const navigate = useNavigate();
 
   const initializeWebGazer = () => {
     const webgazer = window.webgazer;
 
-    // Adjusted bounding box with added tolerance
-    const greenBox = {
-      minX: 100, // Boundary adjustment
-      maxX: 900, // Boundary adjustment
-      minY: 100, // Boundary adjustment
-      maxY: 900, // Boundary adjustment
-    };
+    try {
+      // Adjusted bounding box with added tolerance
+      const greenBox = {
+        minX: 100, // Boundary adjustment
+        maxX: 900, // Boundary adjustment
+        minY: 100, // Boundary adjustment
+        maxY: 900, // Boundary adjustment
+      };
 
-    webgazer
-      .setGazeListener((data) => {
-        if (isMonitoring && data) {
-          const { x, y } = data;
+      webgazer
+        .setGazeListener((data) => {
+          if (isMonitoring && data) {
+            const { x, y } = data;
 
-          console.log(`Gaze coordinates: X: ${x}, Y: ${y}`);
-          console.log(
-            `Green Box: minX: ${greenBox.minX}, maxX: ${greenBox.maxX}, minY: ${greenBox.minY}, maxY: ${greenBox.maxY}`
-          );
+            console.log(`Gaze coordinates: X: ${x}, Y: ${y}`);
+            console.log(
+              `Green Box: minX: ${greenBox.minX}, maxX: ${greenBox.maxX}, minY: ${greenBox.minY}, maxY: ${greenBox.maxY}`
+            );
 
-          const isOutsideGreenBox =
-            x < greenBox.minX ||
-            x > greenBox.maxX ||
-            y < greenBox.minY ||
-            y > greenBox.maxY;
+            const isOutsideGreenBox =
+              x < greenBox.minX ||
+              x > greenBox.maxX ||
+              y < greenBox.minY ||
+              y > greenBox.maxY;
 
-          if (isOutsideGreenBox) {
-            setOutOfBoundsCount(outOfBoundsCount + 1);
-          } else {
-            setOutOfBoundsCount(0);
-          }
-
-          // Trigger alert only if out of bounds for more than 5 frames consecutively
-          if (outOfBoundsCount > 5) {
-            if (warningIssued) {
-              alert("Test ended, malpractice detected");
-              webgazer.pause();
-              navigate("/");
+            if (isOutsideGreenBox) {
+              setOutOfBoundsCount(outOfBoundsCount + 1);
             } else {
-              alert(
-                "Warning: Please ensure your face stays within the green box."
-              );
-              setWarningIssued(true);
+              setOutOfBoundsCount(0);
             }
-            setOutOfBoundsCount(0); // Reset the count after triggering the alert
+
+            // Trigger alert only if out of bounds for more than 5 frames consecutively
+            if (outOfBoundsCount > 5) {
+              if (warningIssued) {
+                alert("Test ended, malpractice detected");
+                webgazer.pause();
+                navigate("/");
+              } else {
+                alert(
+                  "Warning: Please ensure your face stays within the green box."
+                );
+                setWarningIssued(true);
+              }
+              setOutOfBoundsCount(0); // Reset the count after triggering the alert
+            }
           }
-        }
-      })
-      .begin();
+        })
+        .begin();
+    } catch (error) {
+      console.error("Error initializing WebGazer:", error);
+    }
   };
 
   useEffect(() => {
